@@ -18,11 +18,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  phone: {
-    type: String,
-    unique: true,
-    default: null
-  },
   nickname: {
     type: String,
     default: null

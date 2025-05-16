@@ -1,14 +1,18 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
+import OTP from "../models/otp.model.js";
 import { generateToken } from "../lib/utils.js";
+import { sendMail } from "../lib/sendmail.js"; // Import the sendMail function
 
 export const signup = async (req, res) => {
-  const {email, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Validate email and password
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     // Check if user already exists
@@ -18,8 +22,10 @@ export const signup = async (req, res) => {
     }
 
     // Check if password is strong enough
-    if(password.length < 8) {
-      return res.status(400).json({ message: "Password must be at least 8 characters long" });
+    if (password.length < 8) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 8 characters long" });
     }
 
     // Hash the password
@@ -31,32 +37,52 @@ export const signup = async (req, res) => {
       email,
       passwordHash: hashedPassword,
       isVerified: false,
-      kycStatus: 'not_started'
+      kycStatus: "not_started",
     });
 
     if (!newUser) {
       return res.status(400).json({ message: "User creation failed" });
     }
 
-    generateToken(newUser._id, res); // Generate token and set cookie
     await newUser.save(); // Save the user to the database
 
-    res.status(201).json({ message: "User created successfully", userId: newUser._id });
-  }
-  // Check if user already exists
-  catch (error) {
+    const code = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit code
+
+    const otp = new OTP({
+      userId: newUser._id,
+      code,
+      purpose: "verify_email", // Purpose of the OTP
+      expiresAt: Date.now() + 10 * 60 * 1000, // OTP expires in 10 minutes
+    });
+    await otp.save(); // Save the OTP to the database
+
+    //Send OTP to user's email (you can use a service like SendGrid or Nodemailer)
+    sendMail(email, "Verify your email", `Your OTP is ${code}`)
+      .then(() => {
+        console.log("Email sent successfully");
+      })
+      .catch((error) => {
+        console.error("Error sending email:", error);
+      });
+
+    res
+      .status(201)
+      .json({ message: "User created successfully", userId: newUser._id });
+  } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
 
   try {
     // Validate email and password
     if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     // Check if user exists
@@ -71,14 +97,14 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    generateToken(user._id, res); // Generate token and set cookie
+    rememberMe && generateToken(user._id, res); // Generate token and set cookie
 
     res.status(200).json({ message: "Login successful", userId: user._id });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 export const logout = async (req, res) => {
   try {
@@ -88,7 +114,7 @@ export const logout = async (req, res) => {
     console.error("Error logging out:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 export const getUser = async (req, res) => {
   try {
@@ -104,5 +130,4 @@ export const getUser = async (req, res) => {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
-
+};

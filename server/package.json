@@ -20,6 +20,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.13.1",
     "mongoose": "^8.11.0",
+    "nodemailer": "^7.0.3",
     "server": "file:",
     "socket.io": "^4.8.1"
   },

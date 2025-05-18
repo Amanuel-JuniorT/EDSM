@@ -84,7 +84,17 @@ export const login = async (req, res) => {
 
     rememberMe && generateToken(user._id, res); // Generate token and set cookie
 
-    res.status(200).json({ message: "Login successful" });
+    res
+      .status(200)
+      .json({
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        nickname: user.nickname,
+        isVerified: user.isVerified,
+        kycStatus: user.kycStatus,
+      });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -115,104 +125,6 @@ export const getUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-// export const verifyEmail = async (req, res) => {
-//   const user = req.user;
-
-//   if (!user) {
-//     return res.status(401).json({ message: "Unauthorized" });
-//   }
-
-//   const { _id: userId, email, isVerified } = user; // Get user ID and email from the request
-
-//   // Check if user is already verified
-//   if (isVerified) {
-//     return res.status(400).json({ message: "User already verified" });
-//   }
-
-//   try {
-//     // Find OTP
-//     let otp = await OTP.findOne({ userId, purpose: "verify_email" });
-
-//     if (!otp || otp.expiresAt < Date.now()) {
-//       otp && (await OTP.deleteOne({ _id: otp._id })); // Delete expired OTP
-
-//       const code = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit code
-
-//       otp = new OTP({
-//         userId,
-//         code,
-//         purpose: "verify_email", // Purpose of the OTP
-//         expiresAt: Date.now() + 10 /*min*/ * 60 /*sec*/ * 1000 /*millisec*/, // OTP expires in 10 minutes
-//       });
-
-//       console.log("OTP:", otp);
-//       await otp.save(); // Save the OTP to the database
-
-//       console.log("OTP saved to database:", otp);
-//       //Send OTP to user's email (you can use a service like SendGrid or Nodemailer)
-//       // TODO
-//       //await sendMail(email, "Verify your email", `Your OTP is ${code}`)
-
-//       res.status(200).json({ message: `${otp}: OTP sent to your email` });
-//     } else {
-//       // OTP already exists and is not expired
-//       //TODO
-//       // Send OTP to user's email (you can use a service like SendGrid or Nodemailer)
-//       // await sendMail(email, "Verify your email", `Your OTP is ${code}`)
-
-//       console.log("OTP already sent, please check your email");
-
-//       res
-//         .status(400)
-//         .json({ message: "OTP already sent, please check your email" });
-//     }
-
-//     const { usercode } = req.body;
-//     const mycode = otp.code; // Assign the OTP code to the variable
-//     // console.log("OTP code:", mycode , "mycode: ", usercode);
-
-//     if (!usercode) {
-//       return res.status(400).json({ message: "Code is required" });
-//     }
-
-//     if (mycode != usercode) {
-//       return res.status(400).json({ message: "Invalid code" });
-//     }
-
-//     console.log(mycode === usercode);
-//     // console.log(176);
-
-//     // console.log(180);
-
-//     // // Validate code
-//     // if (!usercode) {
-//     //   return res.status(400).json({ message: "Code is required" });
-//     // }
-
-//     // console.log(187);
-
-//     // // Check if the code matches
-//     // if (mycode != usercode) {
-//     //   return res.status(400).json({ message: "Invalid code" });
-//     // }
-
-//     // console.log(195);
-
-//     // await User.findByIdAndUpdate(userId, { isVerified: true }); // Update user verification status
-
-//     // console.log(200);
-
-//     // await OTP.deleteOne({ _id: otp._id }); // Delete the OTP
-
-//     // console.log(205);
-
-//     res.status(200).json({ message: "Email verified successfully" });
-//   } catch (error) {
-//     console.error("Error verifying email:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
 
 export const sendOTP = async (req, res) => {
   try {

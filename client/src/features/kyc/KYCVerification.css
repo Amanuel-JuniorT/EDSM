@@ -1,0 +1,276 @@
+/* --- KYC Verification Step Styles --- */
+:root {
+  --color-bg: #f7f7f8;
+  --color-card: #fff;
+  --color-title: #111;
+  --color-subtitle: #444;
+  --color-border: #e5e7eb;
+  --color-border-selected: #19e219;
+  --color-border-hover: #1976d2;
+  --color-btn: #111;
+  --color-btn-border: #111;
+  --color-btn-bg: #fff;
+  --color-btn-hover: #f5f5f5;
+  --color-btn-hover-txt: #111;
+  --color-shadow: 0 4px 32px 0 rgba(0,0,0,0.10);
+  --color-shadow-hover: 0 8px 32px 0 rgba(0,0,0,0.13);
+  --color-option-bg: #fff;
+  --color-option-bg-selected: #f8fff8;
+  --color-option-label: #222;
+  --color-option-label-selected: #111;
+  --color-option-desc: #888;
+  --color-option-desc-selected: #444;
+  --color-avatar-bg: #e5e7eb;
+}
+
+body {
+  font-family: 'Segoe UI', 'Inter', Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-title);
+}
+
+.signup-ref-bg {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.signup-ref-logo {
+  position: absolute;
+  top: 2.5rem;
+  left: 2.5rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--color-title);
+}
+.kyc-card {
+  background: var(--color-card);
+  border-radius: 18px;
+  box-shadow: var(--color-shadow);
+  padding: 2.7rem 2.7rem 2.7rem 2.7rem;
+  max-width: 540px;
+  width: 100%;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  transition: box-shadow 0.18s, background 0.18s;
+}
+.kyc-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2.2rem;
+  color: var(--color-title);
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+.kyc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2.7rem;
+  align-items: center;
+  width: 100%;
+}
+.kyc-option {
+  display: flex;
+  align-items: center;
+  background: var(--color-option-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 14px;
+  padding: 1.1rem 1.5rem 1.1rem 1.1rem;
+  cursor: pointer;
+  transition: border 0.18s, box-shadow 0.18s, background 0.18s;
+  box-shadow: 0 1px 4px 0 rgba(0,0,0,0.03);
+  max-width: 500px;
+  width: 100%;
+}
+.kyc-option.selected {
+  border: 2px solid var(--color-border-selected);
+  box-shadow: 0 2px 12px 0 rgba(25,226,25,0.08);
+  background: var(--color-option-bg-selected);
+}
+.kyc-option.selected .kyc-option-label {
+  color: var(--color-option-label-selected);
+  font-weight: 600;
+}
+.kyc-option.selected .kyc-option-desc {
+  color: var(--color-option-desc-selected);
+}
+.kyc-option:hover {
+  border: 2px solid var(--color-border-hover);
+  box-shadow: var(--color-shadow-hover);
+}
+.kyc-option-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-avatar-bg);
+  margin-right: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #bbb;
+  flex-shrink: 0;
+}
+.kyc-option-label {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--color-option-label);
+  letter-spacing: 0.01em;
+}
+.kyc-option-desc {
+  font-size: 1.08rem;
+  color: var(--color-option-desc);
+  margin-top: 0.2rem;
+}
+.kyc-option-label, .kyc-option-desc {
+  display: block;
+}
+.kyc-option-content {
+  display: flex;
+  flex-direction: column;
+}
+.signup-ref-btn-row.kyc-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 2.7rem;
+  width: 100%;
+}
+.signup-ref-btn {
+  font-size: 1.08rem;
+  padding: 0.6em 2.2em;
+  border-radius: 8px;
+  border: 1.2px solid var(--color-btn-border);
+  background: var(--color-btn-bg);
+  color: var(--color-btn);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border 0.15s, box-shadow 0.15s;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.03);
+  white-space: normal;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+}
+.signup-ref-btn.secondary {
+  background: transparent;
+  color: #111;
+  border: 1.2px solid #111;
+}
+.signup-ref-btn.primary {
+  background: #1976d2;
+  color: #fff;
+  border: 1.2px solid #1976d2;
+}
+.signup-ref-btn.primary:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+.signup-ref-btn.primary:hover {
+  background: #1256a0;
+  color: #fff;
+  border-color: #1256a0;
+}
+.signup-ref-btn.secondary:focus {
+  outline: 2px solid #bbb;
+  outline-offset: 2px;
+}
+.signup-ref-btn.secondary:hover {
+  background: var(--color-btn-hover);
+  color: var(--color-btn-hover-txt);
+  border-color: #111;
+}
+@media (max-width: 600px) {
+  .kyc-card {
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+    max-width: 98vw;
+  }
+  .kyc-title {
+    font-size: 1.15rem;
+  }
+  .kyc-options {
+    gap: 0.7rem;
+  }
+  .kyc-option {
+    padding: 0.7rem 0.7rem 0.7rem 0.7rem;
+    max-width: 98vw;
+  }
+  .kyc-option-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+    margin-right: 0.7rem;
+  }
+  .signup-ref-btn-row.kyc-btn-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  .signup-ref-btn {
+    min-width: 0;
+    width: 100%;
+    height: 44px;
+  }
+}
+/* Dark mode support */
+.dark .signup-ref-bg {
+  background: #18191a;
+}
+.dark .kyc-card {
+  background: #232526;
+  box-shadow: 0 4px 32px 0 rgba(0,0,0,0.18);
+}
+.dark .signup-ref-logo,
+.dark .kyc-title {
+  color: #fff;
+}
+.dark .kyc-option {
+  background: #232526;
+  border: 2px solid #444;
+}
+.dark .kyc-option.selected {
+  background: #193219;
+  border: 2px solid #19e219;
+}
+.dark .kyc-option.selected .kyc-option-label {
+  color: #fff;
+  font-weight: 600;
+}
+.dark .kyc-option.selected .kyc-option-desc {
+  color: #eee;
+}
+.dark .kyc-option-label {
+  color: #fff;
+}
+.dark .kyc-option-desc {
+  color: #bbb;
+}
+.dark .signup-ref-btn.primary {
+  background: #1976d2;
+  color: #fff;
+  border: 1.2px solid #1976d2;
+}
+.dark .signup-ref-btn.primary:hover {
+  background: #1256a0;
+  color: #fff;
+  border-color: #1256a0;
+}
+.dark .signup-ref-btn.secondary {
+  background: transparent;
+  color: #bbb;
+  border: 1.2px solid #444;
+}
+.dark .signup-ref-btn.secondary:hover {
+  background: #232526;
+  color: #fff;
+  border-color: #888;
+} 

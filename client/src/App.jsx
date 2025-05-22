@@ -78,7 +78,9 @@ function App() {
         <SignUp onNext={handleNext} onShowSignIn={() => setStep(STEPS.SIGNIN)} />
       )}
       {step === STEPS.SIGNIN && (
-        <SignIn onSignIn={() => setStep(STEPS.VERIFY_IDENTITY)} onBackToSignup={() => setStep(STEPS.SIGNUP)} />
+        <SignIn onSignIn={() => {
+          alert('Go to dashboard!');
+        }} onBackToSignup={() => setStep(STEPS.SIGNUP)} />
       )}
       {step === STEPS.VERIFY_IDENTITY && <VerifyIdentity onNext={handleNext} />}
       {step === STEPS.VERIFY_PHONE && (

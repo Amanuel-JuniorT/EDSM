@@ -19,7 +19,8 @@ const otpSchema = new mongoose.Schema({
     type: Date,
     required: true
   }
-});
+},
+{timestamps: true});
 
 const OTP = mongoose.model('Otp', otpSchema);
 

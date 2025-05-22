@@ -1,6 +1,6 @@
 import express from "express";
 import { connectDB } from "./lib/db.js";
-import router from "./routes/auth.route.js";
+import authRoutes from "./routes/auth.route.js";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -17,12 +17,11 @@ app.use(
 app.use(express.json());
 app.use(cookieParser()); // Middleware to parse cookies
 
-app.use("/api/auth", router); // Use the signup function directly here
+app.use("/api/auth", authRoutes); // Use the signup function directly here
+// app.use("/api/auth", router); // Use the signup function directly here
 
-app.post("/check", (req, res) => {
-  const name = req.query.name;
-  console.log(`Name: ${name}`);
-  return res.status(200).json({ message: "Arrived" });
+app.get("/login", (req, res) => {
+  return res.status(200).json({ message: "Login successful" });
 });
 
 app.listen("5000", () => {

@@ -5,7 +5,7 @@ import { generateToken } from "../lib/utils.js";
 import { sendMail } from "../lib/sendmail.js"; // Import the sendMail function
 
 export const signup = async (req, res) => {
-  const { email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
   try {
     // Validate email and password
@@ -22,8 +22,15 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    // Validate first and last name
+    if (!firstName || !lastName) {
+      return res
+        .status(400)
+        .json({ message: "First name and last name are required" });
+    }
+
     // Check if password is strong enough
-    if (password.length < 8) {
+    if (password.length < 10) {
       return res
         .status(400)
         .json({ message: "Password must be at least 8 characters long" });
@@ -37,6 +44,8 @@ export const signup = async (req, res) => {
     const newUser = new User({
       email,
       passwordHash: hashedPassword,
+      firstName,
+      lastName,
       isVerified: false,
       kycStatus: "not_started",
     });
@@ -52,7 +61,7 @@ export const signup = async (req, res) => {
 
     res
       .status(201)
-      .json({ message: "User created successfully", userId: newUser._id });
+      .json({ message: "User created successfully", user: newUser });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -84,17 +93,15 @@ export const login = async (req, res) => {
 
     rememberMe && generateToken(user._id, res); // Generate token and set cookie
 
-    res
-      .status(200)
-      .json({
-        _id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        nickname: user.nickname,
-        isVerified: user.isVerified,
-        kycStatus: user.kycStatus,
-      });
+    res.status(200).json({
+      _id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      nickname: user.nickname,
+      isVerified: user.isVerified,
+      kycStatus: user.kycStatus,
+    });
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -150,7 +157,7 @@ export const sendOTP = async (req, res) => {
     //TODO: Send code via email
 
     console.log(`OTP for ${purpose}:`, code);
-    return res.status(200).json({ otpSent: true });
+    return res.status(200).json({ otpSent: true, code });
   } catch (error) {
     console.error("Error at sendOTP", error);
     return res.status(500).json({ message: "Internal server error " });
@@ -182,7 +189,15 @@ export const verifyOTP = async (req, res) => {
     }
 
     await OTP.deleteOne({ _id: otp._id }); // Delete the OTP
-    return res.status(200).json({ otpMatches: true, message: "OTP matches" });
+    const user = req.user; // Get user from request object
+
+    if (purpose === "verify_email") {
+      user.isVerified = true; // Set user as verified
+      await user.save(); // Save the user
+      console.log("User verified successfully");
+    }
+
+    return res.status(200).json({ user, otpMatches: true, message: "OTP matches" });
   } catch (error) {
     console.error("Error at verifyOTP: ", error);
     return res.status(500).json({ message: "Internal server error" });

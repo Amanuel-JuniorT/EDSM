@@ -197,6 +197,12 @@
   color: #fff;
   border-color: #1256a0;
 }
+.signup-ref-btn.primary[disabled]{
+  background-color: #72ade8 !important;
+  border: #72ade8;
+
+}
+
 .signup-ref-btn.secondary:focus {
   outline: 2px solid #bbb;
   outline-offset: 2px;

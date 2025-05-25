@@ -1,23 +1,21 @@
-import React from 'react';
-import { STEPS, STEP_NAMES } from '../constants/steps';
-import './ProgressBar.css';
+import "./ProgressBar.css";
 
-const TOTAL_STEPS = 7; // Total number of steps in the flow
 
-function ProgressBar({ currentStep }) {
-  // Convert current step to a number for progress calculation
-  const getStepNumber = (step) => {
-    if (typeof step === 'string') {
-      return step === STEPS.SIGNUP ? 0 : -1;
-    }
-    return step;
+export const ProgressBar = ({ currentStep }) => {
+
+  
+  const TOTAL_STEPS = 2; // Total number of steps in the flow
+
+  const STEPS = {
+    "Sign Up": 0,
+    "Verify Identity": 1,
   };
 
-  const currentStepNumber = getStepNumber(currentStep);
-  const progress = ((currentStepNumber + 1) / TOTAL_STEPS) * 100;
+  const progress = ((currentStep + 1) / TOTAL_STEPS) * 100;
 
   return (
     <div className="progress-container">
+
       <div className="progress-bar">
         <div 
           className="progress-fill"
@@ -28,17 +26,18 @@ function ProgressBar({ currentStep }) {
           role="progressbar"
         />
       </div>
+
       <div className="progress-steps">
         {Object.entries(STEPS).map(([key, value]) => {
-          const stepNumber = getStepNumber(value);
-          const isActive = stepNumber === currentStepNumber;
-          const isCompleted = stepNumber < currentStepNumber;
-          const isUpcoming = stepNumber > currentStepNumber;
+          const stepNumber = value;
+          const isActive = stepNumber === currentStep;
+          const isCompleted = stepNumber < currentStep;
+          const isUpcoming = stepNumber > currentStep;
           
           return (
             <div 
               key={key}
-              className={`progress-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''} ${isUpcoming ? 'upcoming' : ''}`}
+              className={`progress-step ${isCompleted ? 'completed' : ''} ${isUpcoming ? 'upcoming' : ''} ${isActive ? 'active' : ''}  `}
               aria-current={isActive ? 'step' : undefined}
             >
               <div className="step-dot">
@@ -48,8 +47,8 @@ function ProgressBar({ currentStep }) {
                   </svg>
                 )}
               </div>
-              <span className="step-label">{STEP_NAMES[value]}</span>
-              {!isUpcoming && (
+              <span className="step-label">{key}</span>
+              {!isUpcoming && !isActive && (
                 <div className="step-connector" />
               )}
             </div>
@@ -60,4 +59,4 @@ function ProgressBar({ currentStep }) {
   );
 }
 
-export default ProgressBar; 
+

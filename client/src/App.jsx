@@ -14,6 +14,8 @@ const App = () => {
   useEffect(() => {
     // Check authentication status when the app loads
     checkAuth()
+    console.log(user);
+    
   }, [checkAuth])
 
   return (
@@ -25,8 +27,8 @@ const App = () => {
         </div>
       )}
       <Routes>
-        <Route path="/signup" element={ user? <Navigate to="/dashboard"/> : <SignUp />} />
-        <Route path="/login" element={user? <Navigate to="/dashboard"/> : <Login />} />
+        <Route path="/signup" element={ user == null || !user.isVerified ? <SignUp /> : <Navigate to="/dashboard"/> } />
+        {/* <Route path="/login" element={user? <Navigate to="/dashboard"/> : <Login />} /> */}
       </Routes>
       <Toaster/>
     </div>

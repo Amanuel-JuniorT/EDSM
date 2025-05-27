@@ -1,3 +1,9 @@
+/*
+  ProgressBar.jsx - KYC/Auth progress bar for EDSM
+  -----------------------------------------------
+  - Shows progress through the authentication and KYC steps.
+  - For backend/frontend devs: Update steps or styling here as needed.
+*/
 import React from 'react';
 import { STEPS, STEP_NAMES } from '../constants/steps';
 import './ProgressBar.css';

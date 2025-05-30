@@ -2,7 +2,17 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import {toast} from "react-hot-toast";
 
+/*
+  useAuthStore.js - Authentication state and logic for EDSM
+  --------------------------------------------------------
+  - Handles user authentication, session, and auth checks.
+  - Integrates with backend API for login, logout, and session validation.
+  - For backend/frontend devs: Add or update API endpoints here as needed.
+*/
+
+// useAuthStore.js - Zustand store for authentication state (mocked for UI testing)
 export const useAuthStore = create((set) => ({
+  // --- Auth state ---
   user: null,
   isCheckingAuth: true,
   error: null,
@@ -21,7 +31,6 @@ export const useAuthStore = create((set) => ({
         user: res.data.user,
         });
       }
-      
       set({ isCheckingAuth: false });
     } catch (error) {
       set({ user: null }); 
@@ -86,5 +95,7 @@ export const useAuthStore = create((set) => ({
       set({ isVerifyingEmail: false });
     }
   },
-  
+
+  // --- Logout (clears user) ---
+  logout: () => set({ user: null }),
 }));

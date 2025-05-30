@@ -6,46 +6,24 @@
   <title>Document</title>
 </head>
 <body>
-  <form action="">
-    <input type="text">
-    <button type="submit" id="submit">Done</button>
-  </form>
+  <h1 id="message"></h1>
+  <button id="message-btn">Get Message</button>
 </body>
 <script type="module">
 
-  const button = document.querySelector("#submit");
-  button.addEventListener('click', async (e)=>{
-    e.preventDefault();
+  const message = document.getElementById("message");
+  const messageButton = document.getElementById("message-btn");
 
-    try{
-      const res = await fetch('http://127.0.0.1:5000/login', {
-        method: 'POST',
-        body: JSON.stringify({name: "Hello", email: "ammas"}),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      const data = await res.json();
-      // data == {message: ""}
+  messageButton.addEventListener("click", async () =>{
+    const res = await fetch("http://localhost:5000/message");
 
-      if(data.status){
-        window.location.href = "home.html"
-      }
+    const data = await res.json();
 
-    }catch(err){
-      console.log(err);
-    }
-
-
+    message.innerText = data.message
     
   })
 
   
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log(data);
-    // })
-    // .catch(error => {
-    //   console.error('Error:', error);
-    // });
 
 </script>
 </html>

@@ -11,10 +11,8 @@ import { toast } from 'react-hot-toast';
 import { usePageStore } from '../store/usePageStore';
 
 const SignUpForm = () => {
-
   const { setNextStep } = usePageStore();
   const { user, signup, isSigningUp } = useAuthStore();
-
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -24,26 +22,15 @@ const SignUpForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Check if all fields are filled
     if (!form.firstName || !form.lastName || !form.email || !form.password)
       return toast.error("Please fill all fields");
-
-    // Check if the email is valid
     if (!/\S+@\S+\.\S+/.test(form.email))
       return toast.error("Invalid email address");
-    // Check if the password is at least 10 characters long
     if (form.password.length < 10)
         return toast.error("Password must be at least 10 characters long");
-
-    // console.log("Clicked");
-
     signup(form);
-    ( user && setNextStep(1))
-
-    
+    if (user) setNextStep(1);
   };
-
-  
 
   return (
     <div className="signup-ref-bg">

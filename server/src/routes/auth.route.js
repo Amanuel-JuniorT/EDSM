@@ -24,7 +24,7 @@ router.post("/sendOTP", protectedRoute, sendOTP);
 router.post("/verifyOtp", protectedRoute, verifyOTP);
 
 // Route for user data
-router.post("/getUser", protectedRoute, getUser)
+router.get("/getUser", protectedRoute, getUser)
 
 // Route for user logout
 router.post("/logout", logout);

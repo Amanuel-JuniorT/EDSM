@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { STEPS } from './constants/steps';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProgressBar from './components/ProgressBar';
@@ -10,6 +10,8 @@ import EnterCode from './features/kyc/EnterCode';
 import KYCVerification from './features/kyc/KYCVerification';
 import IncludePhoto from './features/kyc/IncludePhoto';
 import VerificationPending from './features/kyc/VerificationPending';
+import { useAuthStore } from './store/useAuthStore';
+import toast, {Toaster} from 'react-hot-toast'
 
 function getInitialTheme() {
   if (typeof window !== 'undefined') {
@@ -23,26 +25,30 @@ function getInitialTheme() {
 function App() {
   const [theme, setTheme] = useState(getInitialTheme());
   const [step, setStep] = useState(STEPS.SIGNUP);
-  const [phone, setPhone] = useState('');
+  // const [phone, setPhone] = useState('');
   const [method, setMethod] = useState('text');
-  const [selectedKycType, setSelectedKycType] = useState('ID Card');
-  const [isLoading, setIsLoading] = useState(false);
+  // const [selectedKycType, setSelectedKycType] = useState('ID Card');
+  const [ isLoading, setIsLoading] = useState(false);
+
+   const { error, user, checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
-  }, [theme]);
+    checkAuth();
+  }, []);
 
-  const handleNext = async (data) => {
-    setIsLoading(true);
+  const handleNext = async () => {
+    
     try {
-      if (step === STEPS.VERIFY_IDENTITY && data?.phone) {
-        setPhone(data.phone);
-      }
-      if (step === STEPS.KYC_VERIFICATION && data?.kycType) {
-        setSelectedKycType(data.kycType);
-      }
-      setStep(prev => typeof prev === 'number' ? prev + 1 : STEPS.VERIFY_IDENTITY);
+      // if (step === STEPS.VERIFY_IDENTITY && data?.phone) {
+      //   setPhone(data.phone);
+      // }
+      // if (step === STEPS.KYC_VERIFICATION && data?.kycType) {
+      //   setSelectedKycType(data.kycType);
+      // }
+      checkAuth();
+      setStep(prev => typeof prev === 'number' ? prev + 1 : user ? STEPS.VERIFICATION_PENDING : STEPS.SIGNUP);
     } finally {
       setIsLoading(false);
     }
@@ -57,9 +63,13 @@ function App() {
     setStep(STEPS.ENTER_CODE);
   };
 
+ 
+
   return (
     <ErrorBoundary>
       <ProgressBar currentStep={step} />
+
+      {/* Theme Toggle Button */}
       <button
         className="theme-toggle-btn"
         aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -68,11 +78,14 @@ function App() {
         {theme === 'dark' ? '🌞' : '🌙'}
       </button>
       
-      {isLoading && (
+
+      {/* Loading Page */}
+      {isCheckingAuth && (
         <div className="loading-overlay">
           <div className="loading-spinner" />
         </div>
       )}
+
 
       {step === STEPS.SIGNUP && (
         <SignUp onNext={handleNext} onShowSignIn={() => setStep(STEPS.SIGNIN)} />
@@ -87,12 +100,12 @@ function App() {
         <VerifyPhone
           onNext={method => handleSendCode(method)}
           onBack={handleBack}
-          phone={phone}
+          // phone={phone}
         />
       )}
       {step === STEPS.ENTER_CODE && (
         <EnterCode
-          phone={phone}
+          // phone={phone}
           method={method}
           onBack={handleBack}
           onVerify={() => setStep(step + 1)}
@@ -103,7 +116,9 @@ function App() {
         <KYCVerification onNext={data => handleNext({ kycType: data })} onBack={handleBack} />
       )}
       {step === STEPS.INCLUDE_PHOTO && (
-        <IncludePhoto kycType={selectedKycType} onNext={handleNext} onBack={handleBack} />
+        <IncludePhoto 
+        // kycType={selectedKycType}
+         onNext={handleNext} onBack={handleBack} />
       )}
       {step === STEPS.VERIFICATION_PENDING && (
         <VerificationPending 
@@ -111,8 +126,10 @@ function App() {
           onDashboard={() => alert('Go to dashboard!')} 
         />
       )}
+      <Toaster/>
     </ErrorBoundary>
+    
   );
 }
 
-export default App
+export default App;

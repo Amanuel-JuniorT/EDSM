@@ -1,15 +1,17 @@
 import { useState } from "react";
 import "./SignIn.css";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
-function SignIn({ onSignIn, onBackToSignup }) {
+function SignIn({ onSignIn }) {
+  const navigate = useNavigate();
   const [form, setForm] = useState({ email: "", password: "" });
   const [remember, setRemember] = useState(false);
 
   return (
     <div className="signup-ref-bg">
       <div className="signup-ref-logo">EDSM</div>
-      <div className="signup-ref-card">
+      <div style={{ marginTop: "0rem" }} className="signup-ref-card">
         <form
           className="signup-ref-form"
           onSubmit={e => {
@@ -54,7 +56,7 @@ function SignIn({ onSignIn, onBackToSignup }) {
           </div>
           <div className="signup-ref-already">
             <span>New to EDSM? </span>
-            <a href="#" className="signup-ref-link" onClick={e => { e.preventDefault(); onBackToSignup(); }}>Create an account</a>
+            <a href="#" className="signup-ref-link" onClick={e => { e.preventDefault(); navigate("/signup"); }}>Create an account</a>
           </div>
           <div className="signup-ref-divider" />
           <div className="signup-ref-btn-row">

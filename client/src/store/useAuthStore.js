@@ -38,11 +38,40 @@ export const useAuthStore = create((set) => ({
     try {
       const res = await axiosInstance.post("/auth/signup", data);
       set({ user: res.data.user });
-      return toast.success("Account created successfully");
+      toast.success("Account created successfully");
+      return true;
     } catch (error) {
-      return error.response == null ? toast.error("Couldn't connect to the server") : toast.error("Error signing up: " + error.response.data.message);
+      error.response == null ? toast.error("Couldn't connect to the server") : toast.error("Error signing up: " + error.response.data.message);
+      return false;
     } finally {
       set({ isSigningUp: false });
+    }
+  },
+
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post("/auth/login", data);
+      set({ user: res.data });
+      toast.success("Logged in successfully");
+      return true;
+    } catch (error) {
+      error.response == null ? toast.error("Couldn't connect to the server") : toast.error("Error logging in: " + error.response.data.message);
+      return false;
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+
+  logout: async (showToast) => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      set({ user: null });
+      showToast && toast.success("Logged out successfully");
+      return true;
+    } catch (error) {
+      error.response == null ? showToast ? toast.error("Couldn't connect to the server") : console.error("Couldn't connect to the server") : showToast ? toast.error("Error logging out: " + error.response.data.message) : console.error("Error logging out: " + error.response.data.message);
+      return false;
     }
   },
 
@@ -86,5 +115,7 @@ export const useAuthStore = create((set) => ({
       set({ isVerifyingEmail: false });
     }
   },
+
+  clearUser: () => set({ user: null}),
   
 }));

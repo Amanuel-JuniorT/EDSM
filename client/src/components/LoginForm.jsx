@@ -1,23 +1,46 @@
 import { useState } from "react";
-import "./SignIn.css";
+// import "./SignIn.css";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import {  toast } from "react-hot-toast";
+import { useAuthStore } from "../store/useAuthStore";
 
-function SignIn({ onSignIn }) {
+function Login() {
+
+  const { user, isLoggingIn, login } = useAuthStore();
+
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [remember, setRemember] = useState(false);
+  const [form, setForm] = useState({ email: "", password: "", rememberMe: false });
+  
+  const handleSummit = async (e) => {
+    e.preventDefault();
+    if (!form.email || !form.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    const res = await login(form)
+
+    if(!res){
+      user.isVerified ? navigate("/dashboard") : navigate("/verify-email");
+    }
+    
+
+    
+  }
 
   return (
     <div className="signup-ref-bg">
+      {isLoggingIn && (
+        <div className="loading-overlay">
+          <div className="loading-spinner" />
+        </div>
+      )}
       <div className="signup-ref-logo">EDSM</div>
       <div style={{ marginTop: "0rem" }} className="signup-ref-card">
         <form
           className="signup-ref-form"
-          onSubmit={e => {
-            e.preventDefault();
-            onSignIn({ ...form, remember });
-          }}
+          onSubmit={handleSummit}
           autoComplete="off"
         >
           <div className="signup-ref-title">Sign in to EDSM</div>
@@ -27,7 +50,7 @@ function SignIn({ onSignIn }) {
             placeholder="Email address"
             value={form.email}
             onChange={e => setForm({ ...form, email: e.target.value })}
-            required
+            
             className="signup-ref-input"
             autoComplete="email"
             aria-label="Email address"
@@ -37,7 +60,6 @@ function SignIn({ onSignIn }) {
             placeholder="Password"
             value={form.password}
             onChange={e => setForm({ ...form, password: e.target.value })}
-            required
             className="signup-ref-input"
             autoComplete="current-password"
             aria-label="Password"
@@ -46,8 +68,8 @@ function SignIn({ onSignIn }) {
             <input
               type="checkbox"
               id="remember-me"
-              checked={remember}
-              onChange={e => setRemember(e.target.checked)}
+              checked={form.rememberMe}
+              onChange={e => setForm({...form, rememberMe: e.target.checked})}
               style={{ marginRight: 8 }}
             />
             <label htmlFor="remember-me" style={{ fontSize: '1rem', color: '#444', cursor: 'pointer' }}>
@@ -68,9 +90,9 @@ function SignIn({ onSignIn }) {
   );
 }
 
-SignIn.propTypes = {
+Login.propTypes = {
   onSignIn: PropTypes.func.isRequired,
   onBackToSignup: PropTypes.func.isRequired,
 };
 
-export default SignIn; 
+export default Login; 

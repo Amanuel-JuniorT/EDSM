@@ -7,7 +7,7 @@ import { usePageStore } from '../store/usePageStore';
 const SignUpForm = () => {
 
   const { setNextStep } = usePageStore();
-  const { user, signup, isSigningUp } = useAuthStore();
+  const { signup, isSigningUp } = useAuthStore();
 
   const [form, setForm] = useState({
     firstName: "",
@@ -16,7 +16,7 @@ const SignUpForm = () => {
     password: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Check if all fields are filled
     if (!form.firstName || !form.lastName || !form.email || !form.password)
@@ -31,8 +31,9 @@ const SignUpForm = () => {
 
     // console.log("Clicked");
 
-    signup(form);
-    ( user && setNextStep())
+    const res = await signup(form);
+    if (res) 
+      {setNextStep();}
 
     
   };

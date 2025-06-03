@@ -5,7 +5,8 @@ import {
   logout,
   sendOTP,
   verifyOTP,
-  getUser
+  getUser,
+  saveCookie
 } from "../controller/auth.controller.js";
 import { protectedRoute } from "../middleware/auth.middleware.js";
 
@@ -28,6 +29,8 @@ router.get("/getUser", protectedRoute, getUser)
 
 // Route for user logout
 router.post("/logout", logout);
+
+router.get("/saveUser", saveCookie);
 
 // router.post("/test", (req, res) => {
 //   const name = req.query.name;

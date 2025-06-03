@@ -10,7 +10,14 @@ const CODE_LENGTH = 6;
 
 function EnterCode({ purpose, onVerify }) {
   const navigate = useNavigate();
-  const { isVerifyingEmail, user, sendOTP, isSendingOTP, verifyOTP, logout:clearToken } = useAuthStore(); 
+  const {
+    isVerifyingEmail,
+    user,
+    sendOTP,
+    isSendingOTP,
+    verifyOTP,
+    logout: clearToken,
+  } = useAuthStore();
   const { setPreviousStep } = usePageStore();
   const [code, setCode] = useState(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
@@ -22,7 +29,6 @@ function EnterCode({ purpose, onVerify }) {
   useEffect(() => {
     return () => clearInterval(timerIntervalRef.current);
   }, []);
-
 
   const handleChange = (i, val) => {
     if (!/^[0-9]?$/.test(val)) return;
@@ -121,8 +127,7 @@ function EnterCode({ purpose, onVerify }) {
     }
 
     clearToken(false);
-
-  }
+  };
 
   return (
     <div className="signup-ref-bg">
@@ -210,14 +215,18 @@ function EnterCode({ purpose, onVerify }) {
               aria-disabled={timer > 0}
             >
               {" "}
-              { isSendingOTP ? (<div
+              {isSendingOTP ? (
+                <div
                   style={{ width: 20, height: 20 }}
                   className="loading-spinner"
-                />) : firstMounted.current
-                ? "Send code"
-                : timer > 0
-                ? `Resend code in ${timer}s`
-                : "Resend code"}
+                />
+              ) : firstMounted.current ? (
+                "Send code"
+              ) : timer > 0 ? (
+                `Resend code in ${timer}s`
+              ) : (
+                "Resend code"
+              )}
             </button>
           </div>
           <hr className="signup-ref-divider" />
@@ -252,7 +261,7 @@ function EnterCode({ purpose, onVerify }) {
 
 EnterCode.propTypes = {
   email: PropTypes.string,
-  purpose: PropTypes.oneOf(["signup", "login", "resetPassword"]).isRequired,
+  purpose: PropTypes.isRequired,
   onBack: PropTypes.func.isRequired,
   onVerify: PropTypes.func.isRequired,
   onResend: PropTypes.func.isRequired,

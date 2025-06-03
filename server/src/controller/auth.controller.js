@@ -69,7 +69,7 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password, rememberMe } = req.body;
+  const { email, password } = req.body;
 
   try {
     // Validate email and password
@@ -91,7 +91,7 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    rememberMe && generateToken(user._id, res); // Generate token and set cookie
+    generateToken(user._id, res); // Generate token and set cookie
 
     res.status(200).json({
       _id: user._id,
@@ -200,6 +200,23 @@ export const verifyOTP = async (req, res) => {
     return res.status(200).json({ user, otpMatches: true, message: "OTP matches" });
   } catch (error) {
     console.error("Error at verifyOTP: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const saveCookie = async (req, res) => {
+  try {
+    const { userId } = req.query; // Get user ID from query parameters
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const token = generateToken(userId, res); // Generate token and set cookie
+
+    return res.status(200).json({ message: "Cookie saved successfully", token });
+  } catch (error) {
+    console.error("Error saving cookie:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

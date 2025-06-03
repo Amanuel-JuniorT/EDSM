@@ -1,3 +1,10 @@
+/*
+  steps.js - KYC/Auth step constants for EDSM
+  ------------------------------------------
+  - Defines the step numbers for the authentication and KYC flow.
+  - For backend/frontend devs: If you add or change steps, update this file and all usages.
+*/
+
 export const STEPS = {
   SIGNUP: 'signup',
   SIGNIN: 'signin',

@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDSM - Ethiopian Digital Stock Market</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Global Topbar -->
+    <div class="topbar">
+        <div class="topbar-icons">
+            <button id="notification-btn" class="notification-btn" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge"></span>
+            </button>
+            <div class="profile-icon" aria-label="Profile">
+                <img src="https://ui-avatars.com/api/?name=Nati+Ha&background=007bff&color=fff&rounded=true&size=32" alt="Profile" />
+            </div>
+            <button id="theme-toggle-btn" aria-label="Toggle dark/light mode" class="theme-toggle-btn">
+                <span class="theme-icon" id="theme-toggle-icon" role="img" aria-hidden="true">🌙</span>
+            </button>
+        </div>
+    </div>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-chart-line"></i> EDSM</h2>
+            </div>
+            <div class="sidebar-menu">
+                <div class="menu-item active" data-page="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" data-page="market">
+                    <i class="fas fa-store"></i>
+                    <span>Market</span>
+                </div>
+                <div class="menu-item" data-page="portfolio">
+                    <i class="fas fa-wallet"></i>
+                    <span>Portfolio</span>
+                </div>
+                <div class="menu-item" data-page="news">
+                    <i class="fas fa-newspaper"></i>
+                    <span>News</span>
+                </div>
+                <div class="menu-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">N</div>
+                    <div class="user-info">
+                        <div class="user-name">Natnael Habtamu</div>
+                        <div class="user-email">nati@edsm.et</div>
+                    </div>
+                </div>
+                <button class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Market Page -->
+            <div id="market-page" class="page-content" style="display: none;">
+                <div class="header">
+                    <h1>Market</h1>
+                    <div class="header-actions">
+                        <!-- Filters button removed -->
+                    </div>
+                </div>
+
+                <div class="market-filters">
+                    <button class="filter-btn active" id="tab-all">All</button>
+                    <button class="filter-btn" id="tab-top-movers">Top Movers</button>
+                    <button class="filter-btn" id="tab-technology">Technology</button>
+                    <button class="filter-btn" id="tab-finance">Finance</button>
+                    <button class="filter-btn" id="tab-energy">Energy</button>
+                </div>
+
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search stocks..." class="market-search">
+                </div>
+
+                <div class="market-layout">
+                    <div class="market-main">
+                        <div class="card">
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Stock Name</th>
+                                            <th>Last Price</th>
+                                            <th>Change (%)</th>
+                                            <th>Market Cap</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stocks-table-body">
+                                        <!-- JS will populate this -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="watchlist-panel">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Your Watchlist</div>
+                            </div>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Stock</th>
+                                            <th>Price</th>
+                                            <th>Change</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="watchlist-body">
+                                        <!-- JS will populate this -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock Detail View -->
+            <div id="stock-details-page" class="page-content" style="display: none;">
+                <div class="header">
+                    <div class="back-options">
+                        <button class="btn btn-outline" id="back-to-market">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Market</span>
+                        </button>
+                        <button class="btn btn-outline" id="back-to-watchlist">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Watchlist</span>
+                        </button>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-outline" id="add-to-watchlist">
+                            <i class="fas fa-star"></i>
+                            <span>Add to Watchlist</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stock-detail-header">
+                    <div>
+                        <h1><span id="details-symbol"></span> <span id="details-name"></span></h1>
+                        <div class="stock-price" id="details-price"></div>
+                    </div>
+                    <div class="price-change" id="details-price-change"></div>
+                </div>
+
+                <div class="stock-stats">
+                    <div class="stat-item">
+                        <h4>Open Price</h4>
+                        <div class="value" id="details-open"></div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Day's Low</h4>
+                        <div class="value" id="details-low"></div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Day's High</h4>
+                        <div class="value" id="details-high"></div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>After Hours</h4>
+                        <div class="value" id="details-after-hours"></div>
+                    </div>
+                </div>
+
+                <div class="market-layout">
+                    <div class="market-main">
+                        <div class="card">
+                            <div class="chart-container">
+                                <img id="details-chart" src="" alt="Stock Chart" style="width: 100%;">
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">Company News</div>
+                            </div>
+                            <div class="news-article">
+                                <div class="news-content">
+                                    <h3 id="details-news-title"></h3>
+                                    <p id="details-news-body"></p>
+                                </div>
+                                <div class="news-image">
+                                    <img id="details-news-image" src="" alt="News thumbnail">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="watchlist-panel">
+                        <div class="card">
+                            <div class="trade-panel">
+                                <div class="trade-tabs">
+                                    <div class="trade-tab active">Buy</div>
+                                    <div class="trade-tab">Sell</div>
+                                </div>
+                                <form class="trade-form">
+                                    <div class="form-group">
+                                        <label for="details-trade-stock">Stock</label>
+                                        <input type="text" id="details-trade-stock" class="form-control" readonly>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="trade-shares">Number of Shares</label>
+                                        <input type="number" id="trade-shares" class="form-control" value="100" min="1">
+                                    </div>
+                                    <div class="trade-summary">
+                                        <div class="summary-row">
+                                            <span>Estimated Cost</span>
+                                            <span class="trade-total-value">ETB 0.00</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary trade-btn buy">Buy Stock</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page-content" style="display: block;">
+                <div class="dashboard-header">
+                    <div class="dashboard-header-left">
+                        <h1>Welcome back, Nati <span class="wave">👋</span></h1>
+                        <div class="dashboard-subtitle">Here is your overview of your investments.</div>
+                    </div>
+                    <div class="dashboard-header-right">
+                        <!-- Icons removed for global topbar -->
+                    </div>
+                </div>
+                <div class="dashboard-summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-title">Portfolio Value</div>
+                        <div class="summary-value">ETB 40,340.32</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-title">Daily Gain/Loss</div>
+                        <div class="summary-value positive"><i class="fas fa-arrow-up"></i> 2.23%</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-title">Available Balance</div>
+                        <div class="summary-value">ETB 10,340.32</div>
+                    </div>
+                </div>
+                <div class="dashboard-actions-row">
+                    <div class="card quick-action-card">
+                        <div class="card-header">
+                            <div class="card-title">Quick Action</div>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="btn btn-outline" id="quick-buy-stock"><i class="fas fa-bolt"></i> Buy Stock</button>
+                            <button class="btn btn-outline" id="quick-add-fund"><i class="fas fa-download"></i> Add Fund</button>
+                            <button class="btn btn-outline" id="quick-view-watchlist"><i class="fas fa-bookmark"></i> View Watchlist</button>
+                            <button class="btn btn-outline" id="quick-search"><i class="fas fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-main-row">
+                    <div class="dashboard-main-left">
+                        <div class="card portfolio-overview-card">
+                            <div class="card-header">
+                                <div class="card-title">Portfolio overview</div>
+                            </div>
+                            <div class="portfolio-overview-content">
+                                <div class="portfolio-chart-wrapper">
+                                    <canvas id="portfolio-donut" width="80" height="80"></canvas>
+                                </div>
+                                <table class="portfolio-table">
+                                    <thead>
+                                        <tr><th>Shares</th><th>Avg. price</th><th>Change</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>ETHAIR</td><td>2500.04</td><td>+2%</td></tr>
+                                        <tr><td>ETHCOM</td><td>656.00</td><td>-23.1%</td></tr>
+                                        <tr><td>ETHEL</td><td>453.1</td><td>+21%</td></tr>
+                                        <tr><td>ETHBNK</td><td>342.00</td><td>+13.3%</td></tr>
+                                        <tr><td>ETHCES</td><td>1233.76</td><td>-1%</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-main-right">
+                        <div class="card market-feed-card">
+                            <div class="card-header">
+                                <div class="card-title">Market Feed</div>
+                            </div>
+                            <table class="market-feed-table">
+                                <thead>
+                                    <tr><th>Top Gathers</th><th>price</th><th>Change</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>ETHAIR</td><td>2500.04</td><td>+2%</td></tr>
+                                    <tr><td>ETHCOM</td><td>656.00</td><td>-23.1%</td></tr>
+                                    <tr><td>ETHEL</td><td>453.1</td><td>+21%</td></tr>
+                                    <tr><td>ETHBNK</td><td>342.00</td><td>+13.3%</td></tr>
+                                    <tr><td>ETHCES</td><td>1233.76</td><td>-1%</td></tr>
+                                    <tr><td>ETHAIR</td><td>2500.04</td><td>+2%</td></tr>
+                                    <tr><td>ETHCOM</td><td>656.00</td><td>-23.1%</td></tr>
+                                    <tr><td>ETHEL</td><td>453.1</td><td>+21%</td></tr>
+                                    <tr><td>ETHBNK</td><td>342.00</td><td>+13.3%</td></tr>
+                                    <tr><td>ETHCES</td><td>1233.76</td><td>-1%</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-news-row">
+                    <div class="card news-card">
+                        <div class="card-header">
+                            <div class="card-title">News</div>
+                        </div>
+                        <div class="news-list" id="dashboard-news-list">
+                            <!-- JS will populate news cards -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Page -->
+            <div id="portfolio-page" class="page-content" style="display: none;">
+                <div class="portfolio-header">
+                    <h1>Welcome back, Nati</h1>
+                    <div class="portfolio-subtitle">Here is your Portfolio</div>
+                </div>
+                <div class="portfolio-value-card card">
+                    <div class="portfolio-value-main">
+                        <div>
+                            <div class="portfolio-value-label">Portfolio Value</div>
+                            <div class="portfolio-value-amount" id="portfolio-value-amount">ETB 40,340.32</div>
+                            <div class="portfolio-value-gain" id="portfolio-value-gain">+ETB233.4 (3.2%)</div>
+                        </div>
+                        <div class="portfolio-value-actions">
+                            <button class="btn btn-outline" id="portfolio-add-fund"><i class="fas fa-plus"></i> Add Fund</button>
+                            <button class="btn btn-outline" id="portfolio-withdraw"><i class="fas fa-arrow-up"></i> Withdraw</button>
+                        </div>
+                    </div>
+                    <div class="portfolio-summary-row">
+                        <div class="portfolio-summary-card">
+                            <div class="portfolio-summary-label">Total Investment</div>
+                            <div class="portfolio-summary-value" id="portfolio-total-investment">ETB 10,000</div>
+                        </div>
+                        <div class="portfolio-summary-card">
+                            <div class="portfolio-summary-label">Cash</div>
+                            <div class="portfolio-summary-value" id="portfolio-cash">ETB 2322.22</div>
+                        </div>
+                        <div class="portfolio-summary-card">
+                            <div class="portfolio-summary-label">Todays Return</div>
+                            <div class="portfolio-summary-value" id="portfolio-todays-return">+ ETB 123.32</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-assets-card card">
+                    <div class="portfolio-assets-header">Assets</div>
+                    <div class="portfolio-assets-table-wrapper">
+                        <table class="portfolio-assets-table">
+                            <thead>
+                                <tr>
+                                    <th>Asset</th>
+                                    <th>Shares</th>
+                                    <th>Avg Price</th>
+                                    <th>Current Price</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="portfolio-assets-tbody">
+                                <!-- JS will populate -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watchlist Page -->
+            <div id="watchlist-page" class="page-content" style="display: none;">
+                <div class="watchlist-header">
+                    <h1>My Watchlist</h1>
+                    <div class="watchlist-subtitle">Track your favorite stocks and monitor their performance</div>
+                </div>
+                <div class="watchlist-filters">
+                    <div class="watchlist-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search stocks by symbol or name...">
+                    </div>
+                    <div class="watchlist-sort">
+                        <select class="form-control" id="watchlist-sort">
+                            <option value="default">Sort by: Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="change-asc">Change: Low to High</option>
+                            <option value="change-desc">Change: High to Low</option>
+                            <option value="name-asc">Name: A-Z</option>
+                            <option value="name-desc">Name: Z-A</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="watchlist-grid" id="watchlist-grid">
+                    <!-- JS will populate this -->
+                </div>
+                <div class="watchlist-empty" id="watchlist-empty" style="display: none;">
+                    <div class="empty-state">
+                        <i class="fas fa-star"></i>
+                        <h3>Your watchlist is empty</h3>
+                        <p>Add stocks to your watchlist to track their performance and get real-time updates</p>
+                        <button class="btn btn-primary" id="browse-stocks-btn">
+                            <i class="fas fa-chart-line"></i>
+                            Browse Stocks
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Page -->
+            <div id="news-page" class="page-content" style="display: none;">
+                <div class="news-header">
+                    <h1>News</h1>
+                    <div class="news-subtitle">Explore recent activities</div>
+                </div>
+                <div class="news-filters">
+                    <button class="news-filter-btn active">Recent</button>
+                    <button class="news-filter-btn">All</button>
+                    <button class="news-filter-btn">Technology</button>
+                    <button class="news-filter-btn">Finance</button>
+                    <button class="news-filter-btn">Energy</button>
+                    <button class="news-filter-btn">Finance</button>
+                    <button class="news-filter-btn">Energy</button>
+                </div>
+                <div class="news-grid" id="news-grid">
+                    <!-- JS will populate news cards -->
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings-page" class="page-content" style="display: none;">
+                <div class="settings-header">
+                    <div class="settings-user">Nati Ha</div>
+                    <div class="settings-tabs">
+                        <span class="settings-tab active" id="settings-tab-main">Setting</span>
+                        <span class="settings-tab" id="settings-tab-help">Help</span>
+                    </div>
+                </div>
+                <div class="settings-content-row">
+                    <div class="settings-menu">
+                        <div class="settings-menu-item active" id="settings-menu-security">Security and Privacy</div>
+                        <div class="settings-menu-item" id="settings-menu-appearance">App appearance</div>
+                    </div>
+                    <div class="settings-main-content">
+                        <div id="settings-section-security" class="settings-section" style="display: block;">
+                            <div class="settings-section-menu">
+                                <span class="settings-section-menu-item active" id="settings-section-menu-security">Security and Privacy</span>
+                                <span class="settings-section-menu-item" id="settings-section-menu-appearance">App appearance</span>
+                            </div>
+                            <div class="settings-section-columns">
+                                <div class="settings-section-col">
+                                    <div class="settings-section-title">Security</div>
+                                    <div class="settings-section-desc">Keep your EDSM account secure with additional layers of protection.</div>
+                                    <div class="settings-section-list">
+                                        <div class="settings-section-list-row">Password <span class="settings-section-action">Update Password</span></div>
+                                        <div class="settings-section-list-row">Two-factor Authentication <span class="settings-section-action">Disabled &gt;</span></div>
+                                        <div class="settings-section-list-row">Devices</div>
+                                        <div class="settings-section-list-row">Linked apps</div>
+                                    </div>
+                                    <div class="settings-section-title" style="margin-top:32px;">Privacy</div>
+                                    <div class="settings-section-desc">Manage how your data is used</div>
+                                    <div class="settings-section-list">
+                                        <div class="settings-section-list-row">Data Sharing permissions <span class="settings-section-action">Enabled</span></div>
+                                        <div class="settings-section-list-row">Request Personal Data</div>
+                                        <div class="settings-section-list-row">Request Data Deletion</div>
+                                        <div class="settings-section-list-row">Privacy Policy <span class="settings-section-action">&gt;</span></div>
+                                    </div>
+                                    <div class="settings-logout"><a href="#" id="settings-logout-link">Log Out</a></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="settings-section-appearance" class="settings-section" style="display: none;">
+                            <div class="settings-section-menu">
+                                <span class="settings-section-menu-item" id="settings-section-menu-security2">Security and Privacy</span>
+                                <span class="settings-section-menu-item active" id="settings-section-menu-appearance2">App appearance</span>
+                            </div>
+                            <div class="settings-section-columns">
+                                <div class="settings-section-col">
+                                    <div class="settings-section-title">App Appearance</div>
+                                    <div class="settings-section-list">
+                                        <div class="settings-section-list-row">Theme <select id="settings-theme-select"><option>Light</option><option>Dark</option></select></div>
+                                        <div class="settings-section-list-row">Accessible Colors <label class="switch"><input type="checkbox" id="settings-accessible-toggle"><span class="slider round"></span></label></div>
+                                        <div class="settings-section-list-row" style="font-size:0.95em;color:#888;">Best of red-green colorblindness</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Help Content Section -->
+                <div id="help-main-content" class="settings-main-content" style="display: none;">
+                    <div class="help-header">
+                        <h2><i class="fas fa-question-circle"></i> Help & Support</h2>
+                        <p class="help-subtitle">Find answers, tips, and ways to get in touch with our team.</p>
+                    </div>
+                    <div class="help-cards" id="help-cards">
+                        <div class="help-card">
+                            <div class="help-card-icon"><i class="fas fa-play-circle"></i></div>
+                            <div class="help-card-content">
+                                <h3>Getting Started</h3>
+                                <p>Learn how to set up your account, explore the dashboard, and start trading on EDSM.</p>
+                                <a href="#">Read the Getting Started Guide</a>
+                            </div>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-icon"><i class="fas fa-info-circle"></i></div>
+                            <div class="help-card-content">
+                                <h3>Frequently Asked Questions</h3>
+                                <p>Find quick answers to the most common questions about using EDSM.</p>
+                                <a href="#" id="view-faqs-link">View FAQs</a>
+                            </div>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-icon"><i class="fas fa-tools"></i></div>
+                            <div class="help-card-content">
+                                <h3>Troubleshooting</h3>
+                                <p>Having issues? Check our troubleshooting tips for common problems and solutions.</p>
+                                <a href="#" id="troubleshooting-link">Troubleshooting Tips</a>
+                            </div>
+                        </div>
+                        <div class="help-card">
+                            <div class="help-card-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="help-card-content">
+                                <h3>Contact Support</h3>
+                                <p>Still need help? Reach out to our support team for personalized assistance.</p>
+                                <a href="mailto:support@edsm.et">Contact Us</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- FAQ Section (hidden by default) -->
+                    <div id="faq-section" class="help-section" style="display:none;">
+                        <a href="#" id="back-to-help-faq" class="help-back-link"><i class="fas fa-arrow-left"></i> Back to Help</a>
+                        <h3><i class="fas fa-info-circle"></i> Frequently Asked Questions</h3>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <div class="faq-question">How do I create an account on EDSM?</div>
+                                <div class="faq-answer">Click the Sign Up button on the homepage and follow the instructions to register your account.</div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question">How do I buy stocks?</div>
+                                <div class="faq-answer">Navigate to the Market page, select a stock, and click the Buy button. Enter the number of shares and confirm your purchase.</div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question">How do I contact support?</div>
+                                <div class="faq-answer">You can contact support by emailing <a href="mailto:support@edsm.et">support@edsm.et</a>.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Troubleshooting Section (hidden by default) -->
+                    <div id="troubleshooting-section" class="help-section" style="display:none;">
+                        <a href="#" id="back-to-help-troubleshooting" class="help-back-link"><i class="fas fa-arrow-left"></i> Back to Help</a>
+                        <h3><i class="fas fa-tools"></i> Troubleshooting Tips</h3>
+                        <div class="faq-list">
+                            <div class="faq-item">
+                                <div class="faq-question">I can't log in to my account.</div>
+                                <div class="faq-answer">Make sure your email and password are correct. If you forgot your password, use the 'Forgot Password' link to reset it.</div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question">The site is not loading properly.</div>
+                                <div class="faq-answer">Try refreshing the page or clearing your browser cache. If the problem persists, contact support.</div>
+                            </div>
+                            <div class="faq-item">
+                                <div class="faq-question">My transaction failed. What should I do?</div>
+                                <div class="faq-answer">Check your internet connection and try again. If the issue continues, contact our support team for assistance.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Fund Modal (Advanced) -->
+    <div id="add-fund-modal" class="modal" style="display:none;">
+        <div class="modal-content advanced-modal">
+            <h2>Add Funds</h2>
+            <div class="modal-balance">Current Balance: <span id="add-fund-current-balance">ETB 0.00</span></div>
+            <div class="form-group">
+                <label for="add-fund-amount">Amount to Add (ETB):</label>
+                <input type="number" id="add-fund-amount" min="1" class="form-control" placeholder="Enter amount">
+                <div class="modal-error" id="add-fund-amount-error"></div>
+            </div>
+            <div class="form-group">
+                <label>Payment Method:</label>
+                <div class="modal-methods" id="add-fund-methods">
+                    <button type="button" class="modal-method-btn active" data-method="bank"><i class="fas fa-university"></i> Bank Transfer</button>
+                    <button type="button" class="modal-method-btn" data-method="mobile"><i class="fas fa-mobile-alt"></i> Mobile Money</button>
+                    <button type="button" class="modal-method-btn" data-method="card"><i class="fas fa-credit-card"></i> Card</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="add-fund-note">Note (optional):</label>
+                <input type="text" id="add-fund-note" class="form-control" placeholder="e.g. Salary top-up">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="add-fund-confirm">Add</button>
+                <button class="btn btn-outline" id="add-fund-cancel">Cancel</button>
+            </div>
+            <div class="modal-loading" id="add-fund-loading" style="display:none;"><span class="loader"></span> Processing...</div>
+            <div class="modal-success" id="add-fund-success" style="display:none;"><i class="fas fa-check-circle"></i> Fund added successfully!</div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal (Advanced) -->
+    <div id="withdraw-modal" class="modal" style="display:none;">
+        <div class="modal-content advanced-modal">
+            <h2>Withdraw Funds</h2>
+            <div class="modal-balance">Current Balance: <span id="withdraw-current-balance">ETB 0.00</span></div>
+            <div class="form-group">
+                <label for="withdraw-amount">Amount to Withdraw (ETB):</label>
+                <input type="number" id="withdraw-amount" min="1" class="form-control" placeholder="Enter amount">
+                <div class="modal-error" id="withdraw-amount-error"></div>
+            </div>
+            <div class="form-group">
+                <label>Withdraw Method:</label>
+                <div class="modal-methods" id="withdraw-methods">
+                    <button type="button" class="modal-method-btn active" data-method="bank"><i class="fas fa-university"></i> Bank Account</button>
+                    <button type="button" class="modal-method-btn" data-method="mobile"><i class="fas fa-mobile-alt"></i> Mobile Wallet</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="withdraw-note">Note (optional):</label>
+                <input type="text" id="withdraw-note" class="form-control" placeholder="e.g. Rent payment">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="withdraw-confirm">Withdraw</button>
+                <button class="btn btn-outline" id="withdraw-cancel">Cancel</button>
+            </div>
+            <div class="modal-loading" id="withdraw-loading" style="display:none;"><span class="loader"></span> Processing...</div>
+            <div class="modal-success" id="withdraw-success" style="display:none;"><i class="fas fa-check-circle"></i> Withdrawal successful!</div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Filter Modal -->
+    <div id="filter-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:350px;">
+            <h2>Sort & Filter Stocks</h2>
+            <div class="form-group">
+                <label for="sort-select">Sort by:</label>
+                <select id="sort-select" class="form-control">
+                    <option value="default">Default</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="change-asc">Change: Low to High</option>
+                    <option value="change-desc">Change: High to Low</option>
+                    <option value="name-asc">Name: A-Z</option>
+                    <option value="name-desc">Name: Z-A</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="apply-filter-btn">Apply</button>
+                <button class="btn btn-outline" id="cancel-filter-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

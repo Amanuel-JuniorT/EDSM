@@ -1,21 +1,19 @@
-import "./ProgressBar.css";
-
+/*
+  ProgressBar.jsx - KYC/Auth progress bar for EDSM
+  -----------------------------------------------
+  - Shows progress through the authentication and KYC steps.
+  - For backend/frontend devs: Update steps or styling here as needed.
+*/
+import React from 'react';
+import { STEPS, STEP_NAMES } from '../constants/steps';
+import './ProgressBar.css';
 
 export const ProgressBar = ({ currentStep }) => {
-
-  
-  const TOTAL_STEPS = 2; // Total number of steps in the flow
-
-  const STEPS = {
-    "Sign Up": 0,
-    "Verify Identity": 1,
-  };
-
+  const TOTAL_STEPS = Object.keys(STEPS).length;
   const progress = ((currentStep + 1) / TOTAL_STEPS) * 100;
 
   return (
     <div className="progress-container">
-
       <div className="progress-bar">
         <div 
           className="progress-fill"
@@ -26,18 +24,15 @@ export const ProgressBar = ({ currentStep }) => {
           role="progressbar"
         />
       </div>
-
       <div className="progress-steps">
-        {Object.entries(STEPS).map(([key, value]) => {
-          const stepNumber = value;
-          const isActive = stepNumber === currentStep;
-          const isCompleted = stepNumber < currentStep;
-          const isUpcoming = stepNumber > currentStep;
-          
+        {Object.entries(STEP_NAMES).map(([key, label], idx) => {
+          const isActive = idx === currentStep;
+          const isCompleted = idx < currentStep;
+          const isUpcoming = idx > currentStep;
           return (
             <div 
               key={key}
-              className={`progress-step ${isCompleted ? 'completed' : ''} ${isUpcoming ? 'upcoming' : ''} ${isActive ? 'active' : ''}  `}
+              className={`progress-step ${isCompleted ? 'completed' : ''} ${isUpcoming ? 'upcoming' : ''} ${isActive ? 'active' : ''}`}
               aria-current={isActive ? 'step' : undefined}
             >
               <div className="step-dot">
@@ -47,7 +42,7 @@ export const ProgressBar = ({ currentStep }) => {
                   </svg>
                 )}
               </div>
-              <span className="step-label">{key}</span>
+              <span className="step-label">{label}</span>
               {!isUpcoming && !isActive && (
                 <div className="step-connector" />
               )}

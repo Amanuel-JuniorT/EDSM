@@ -38,8 +38,6 @@ function SignUp({ onNext, onShowSignIn }) {
   };
 
   return (
-    
-
     <div className="signup-ref-bg">
       {isSigningUp && (
         <div className="loading-overlay">
@@ -48,20 +46,12 @@ function SignUp({ onNext, onShowSignIn }) {
       )}
       <button
         className="theme-toggle-btn"
-        aria-label={
-          theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-        }
+        aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       >
-        {theme === "dark" ? (
-          <span role="img" aria-label="Light mode">
-            🌞
-          </span>
-        ) : (
-          <span role="img" aria-label="Dark mode">
-            🌙
-          </span>
-        )}
+        <span className="theme-icon" role="img" aria-label={theme === 'dark' ? 'Light mode' : 'Dark mode'}>
+          {theme === 'dark' ? '🌞' : '🌙'}
+        </span>
       </button>
       <div className="signup-ref-logo">EDSM</div>
       <div className="signup-ref-card">

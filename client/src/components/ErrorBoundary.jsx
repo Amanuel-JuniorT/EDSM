@@ -1,3 +1,9 @@
+/*
+  ErrorBoundary.jsx - React error boundary for EDSM
+  ------------------------------------------------
+  - Catches and displays errors in child components.
+  - For backend/frontend devs: Add error logging or custom fallback UI here as needed.
+*/
 import React from 'react';
 
 class ErrorBoundary extends React.Component {

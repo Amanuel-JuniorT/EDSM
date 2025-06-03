@@ -10,7 +10,7 @@ const CODE_LENGTH = 6;
 
 function EnterCode({ purpose, onVerify }) {
   const navigate = useNavigate();
-  const { isVerifyingEmail, user, sendOTP, isSendingOTP, verifyOTP } = useAuthStore(); // Simulating a loading state
+  const { isVerifyingEmail, user, sendOTP, isSendingOTP, verifyOTP, logout:clearToken } = useAuthStore(); 
   const { setPreviousStep } = usePageStore();
   const [code, setCode] = useState(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
@@ -109,6 +109,20 @@ function EnterCode({ purpose, onVerify }) {
       toast.error("Failed to send code. Please try again.");
     }
   };
+
+  const handleReturnBack = () => {
+    setPreviousStep();
+    setCode(Array(CODE_LENGTH).fill(""));
+    setError("");
+    firstMounted.current = true; // Reset for the next use
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      setTimer(0);
+    }
+
+    clearToken(false);
+
+  }
 
   return (
     <div className="signup-ref-bg">
@@ -211,7 +225,7 @@ function EnterCode({ purpose, onVerify }) {
             <button
               type="button"
               className="signup-ref-btn secondary"
-              onClick={setPreviousStep}
+              onClick={handleReturnBack}
             >
               Back
             </button>

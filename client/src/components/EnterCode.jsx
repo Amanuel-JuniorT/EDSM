@@ -9,6 +9,9 @@ import { useNavigate } from "react-router-dom";
 const CODE_LENGTH = 6;
 
 function EnterCode({ purpose, onVerify }) {
+
+  purpose = purpose || "verify_email"; // Default to email verification if not provided
+
   const navigate = useNavigate();
   const {
     isVerifyingEmail,

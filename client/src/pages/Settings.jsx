@@ -5,7 +5,7 @@
   - For backend/frontend devs: Add new settings, tabs, or logic here as needed.
 */
 import React, { useState, useEffect } from "react";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import {
   FaUserCircle,
   FaLock,
@@ -18,7 +18,8 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
-import "./Settings.css";
+import "./Settings/Settings.css";
+import { useAuthStore } from "../store/useAuthStore";
 
 const user = {
   name: "Nati Ha",
@@ -39,6 +40,7 @@ export default function Settings() {
   const [activeSidebar, setActiveSidebar] = useState("security");
   const { theme, setTheme } = useTheme();
   const location = useLocation();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     // Check if we have state from navigation
@@ -53,7 +55,22 @@ export default function Settings() {
         <div className="settings-user-info">
           <FaUserCircle className="settings-user-avatar" />
           <div>
-            <h1 className="settings-user">{user.name}</h1>
+            <h1 className="settings-user">
+              {!user ? (
+                <div
+                  className="skeleton-header"
+                  style={{
+                    height: "40px",
+                    width: "200px",
+                    background: "#eee",
+                    borderRadius: "8px",
+                    marginBottom: "1rem",
+                  }}
+                />
+              ) : (
+                user.firstName
+              )}
+            </h1>
             <div className="settings-user-role">Trader</div>
           </div>
         </div>

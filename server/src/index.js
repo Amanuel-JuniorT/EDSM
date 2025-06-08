@@ -1,9 +1,11 @@
 import express from "express";
 import { connectDB } from "./lib/db.js";
 import authRoutes from "./routes/auth.route.js";
+import stocksRoutes from "./routes/stocks.route.js";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import userRoute from "./routes/user.route.js"; // Import the user route
 
 const app = express();
 
@@ -20,6 +22,10 @@ app.use(express.json());
 app.use(cookieParser()); // Middleware to parse cookies
 
 app.use("/api/auth", authRoutes); // Use the signup function directly here
+
+app.use("/api/stocks", stocksRoutes); // Use the stocks routes
+
+app.use("/api/user", userRoute); // Use the user routes
 
 app.listen("5000", () => {
   console.log("Server is running on port 5000");

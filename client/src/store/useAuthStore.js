@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 /*
   useAuthStore.js - Authentication state and logic for EDSM
@@ -28,15 +28,15 @@ export const useAuthStore = create((set) => ({
       const res = await axiosInstance.get("/auth/getUser");
       if (res.status == 200) {
         set({
-        user: res.data.user,
+          user: res.data.user,
         });
       }
       set({ isCheckingAuth: false });
     } catch (error) {
-      set({ user: null }); 
+      set({ user: null });
       if (error.response == null) {
         return toast.error("Could not connect to server");
-      } 
+      }
     } finally {
       set({ isCheckingAuth: false });
     }
@@ -50,7 +50,9 @@ export const useAuthStore = create((set) => ({
       toast.success("Account created successfully");
       return true;
     } catch (error) {
-      error.response == null ? toast.error("Couldn't connect to the server") : toast.error("Error signing up: " + error.response.data.message);
+      error.response == null
+        ? toast.error("Couldn't connect to the server")
+        : toast.error("Error signing up: " + error.response.data.message);
       return false;
     } finally {
       set({ isSigningUp: false });
@@ -61,11 +63,13 @@ export const useAuthStore = create((set) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      set({ user: res.data });
+      set({ user: res.data.user });
       toast.success("Logged in successfully");
       return true;
     } catch (error) {
-      error.response == null ? toast.error("Couldn't connect to the server") : toast.error("Error logging in: " + error.response.data.message);
+      error.response == null
+        ? toast.error("Couldn't connect to the server")
+        : toast.error("Error logging in: " + error.response.data.message);
       return false;
     } finally {
       set({ isLoggingIn: false });
@@ -79,7 +83,13 @@ export const useAuthStore = create((set) => ({
       showToast && toast.success("Logged out successfully");
       return true;
     } catch (error) {
-      error.response == null ? showToast ? toast.error("Couldn't connect to the server") : console.error("Couldn't connect to the server") : showToast ? toast.error("Error logging out: " + error.response.data.message) : console.error("Error logging out: " + error.response.data.message);
+      error.response == null
+        ? showToast
+          ? toast.error("Couldn't connect to the server")
+          : console.error("Couldn't connect to the server")
+        : showToast
+        ? toast.error("Error logging out: " + error.response.data.message)
+        : console.error("Error logging out: " + error.response.data.message);
       return false;
     }
   },
@@ -89,7 +99,7 @@ export const useAuthStore = create((set) => ({
     if (!user || !purpose) {
       set({ isSendingOTP: false });
       toast.error("Invalid user or purpose");
-      return false
+      return false;
     }
     try {
       await axiosInstance.post(`/auth/sendOTP?purpose=${purpose}`);
@@ -97,39 +107,54 @@ export const useAuthStore = create((set) => ({
       set({ isSendingOTP: false });
       return true;
     } catch (error) {
-      error.response == null ? toast.error("Couldn't connect to the server") : toast.error("Error sending OTP: " + error.response.data.message);
+      error.response == null
+        ? toast.error("Couldn't connect to the server")
+        : toast.error("Error sending OTP: " + error.response.data.message);
       set({ isSendingOTP: false });
       return false;
     } finally {
       set({ isSendingOTP: false });
-    } 
+    }
   },
 
   verifyOTP: async (code, purpose) => {
     set({ isVerifyingEmail: true });
-    if ( !code || !purpose) {
+    if (!code || !purpose) {
       set({ isVerifyingEmail: false });
       toast.error("Invalid user, code or purpose");
       return false;
     }
     try {
-      const res = await axiosInstance.post(`/auth/verifyOTP?purpose=${purpose}`, { code });
+      const res = await axiosInstance.post(
+        `/auth/verifyOTP?purpose=${purpose}`,
+        { code }
+      );
       set({ user: res.data.user });
       toast.success("OTP verified successfully");
       return true;
     } catch (error) {
-      error.response == null ? toast.error("Couldn't connect to the server") : toast.error("Error verifying OTP: " + error.response.data.message);
+      error.response == null
+        ? toast.error("Couldn't connect to the server")
+        : toast.error("Error verifying OTP: " + error.response.data.message);
       return false;
     } finally {
       set({ isVerifyingEmail: false });
     }
   },
 
-<<<<<<< HEAD
-  clearUser: () => set({ user: null}),
+  clearUser: () => set({ user: null }),
+
+  refreshWallet: async () => {
+  const res = await axiosInstance.get("/user/walet_summary");
+  set((state) => ({
+    user: {
+      ...state.user,
+      balance: res.data.balance,
+      portfolio: res.data.portfolio
+    }
+  }));
+}
+
+
   
-=======
-  // --- Logout (clears user) ---
-  logout: () => set({ user: null }),
->>>>>>> a74ec12b93324f9a7bdea4b968c69d14f74a1bd8
 }));

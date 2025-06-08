@@ -1,6 +1,6 @@
-import React from 'react';
-import Topbar from './Topbar';
-import Sidebar from './Sidebar';
+import Topbar from "./Topbar";
+import Sidebar from "./Sidebar";
+import { Outlet } from "react-router-dom";
 
 /*
   Layout.jsx - Main layout wrapper for EDSM
@@ -10,7 +10,7 @@ import Sidebar from './Sidebar';
 */
 
 // Layout.jsx - Wraps main pages with sidebar and topbar
-function Layout({ children }) {
+function Layout() {
   return (
     <div className="app-container">
       {/* Topbar at the top */}
@@ -20,11 +20,11 @@ function Layout({ children }) {
         <Sidebar />
         {/* Main content area */}
         <div className="main-content">
-          {children}
+          <Outlet />
         </div>
       </div>
     </div>
   );
 }
 
-export default Layout; 
+export default Layout;

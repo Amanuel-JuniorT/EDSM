@@ -1,5 +1,6 @@
-import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useEffect } from "react";
 
 /*
   Sidebar.jsx - Main sidebar navigation for EDSM
@@ -11,46 +12,60 @@ import { NavLink, useNavigate } from 'react-router-dom';
 // Sidebar.jsx - Navigation sidebar for main app sections
 function Sidebar() {
   const navigate = useNavigate();
+  const { user, logout, isCheckingAuth, checkAuth } = useAuthStore();
+
+  // useEffect(() => {
+  //   // Check if user is authenticated on mount
+  //   checkAuth();
+  // }, [checkAuth]);
 
   const handleLogout = () => {
-    navigate('/');
+    logout(true);
+    navigate("/");
   };
 
   return (
     <div className="sidebar">
       <div className="sidebar-header">
         {/* App logo/title */}
-        <h2><i className="fas fa-chart-line"></i> EDSM</h2>
+        <h2>
+          <i className="fas fa-chart-line"></i> EDSM
+        </h2>
       </div>
       <div className="sidebar-menu">
         {/* Navigation links for main sections */}
-        <NavLink to="/dashboard" className={({ isActive }) => 
-          `menu-item ${isActive ? 'active' : ''}`
-        }>
+        <NavLink
+          to="/dashboard"
+          className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
+        >
           <i className="fas fa-home"></i>
           <span>Dashboard</span>
         </NavLink>
-        <NavLink to="/market" className={({ isActive }) => 
-          `menu-item ${isActive ? 'active' : ''}`
-        }>
+        <NavLink
+          to="/market"
+          className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
+        >
           <i className="fas fa-store"></i>
           <span>Market</span>
         </NavLink>
-        <NavLink to="/portfolio" className={({ isActive }) => 
-          `menu-item ${isActive ? 'active' : ''}`
-        }>
+        <NavLink
+          to="/portfolio"
+          className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
+        >
           <i className="fas fa-wallet"></i>
           <span>Portfolio</span>
         </NavLink>
-        <NavLink to="/news" className={({ isActive }) => 
-          `menu-item ${isActive ? 'active' : ''}`
-        }>
+        <NavLink
+          to="/news"
+          className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
+        >
           <i className="fas fa-newspaper"></i>
           <span>News</span>
         </NavLink>
-        <NavLink to="/settings" className={({ isActive }) => 
-          `menu-item ${isActive ? 'active' : ''}`
-        }>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) => `menu-item ${isActive ? "active" : ""}`}
+        >
           <i className="fas fa-cog"></i>
           <span>Settings</span>
         </NavLink>
@@ -58,10 +73,31 @@ function Sidebar() {
       <div className="sidebar-footer">
         {/* User profile info and logout */}
         <div className="user-profile">
-          <div className="user-avatar">N</div>
+          {isCheckingAuth || !user ? (
+            <div style={{width: "10px", height: "10px"}} className="loading-spinner" />
+          ) : (
+            <>
+              <div className="user-avatar">{user.firstName.split("")[0]}</div>
+            </>
+          )}
           <div className="user-info">
-            <div className="user-name">Natnael Habtamu</div>
-            <div className="user-email">nati@edsm.et</div>
+            {!user ? (
+              <div
+                className="skeleton-header"
+                style={{
+                  height: "40px",
+                  width: "200px",
+                  background: "#eee",
+                  borderRadius: "8px",
+                  marginBottom: "1rem",
+                }}
+              />
+            ) : (
+              <>
+                <div className="user-name">{`${user.firstName} ${user.lastName}`}</div>
+                <div className="user-email">{user.email}</div>
+              </>
+            )}
           </div>
         </div>
         <button className="logout-btn" onClick={handleLogout}>
@@ -73,4 +109,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar; 
+export default Sidebar;

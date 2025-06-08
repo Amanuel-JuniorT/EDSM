@@ -1,6 +1,11 @@
 import bcrypt from "bcryptjs";
+
 import User from "../models/user.model.js";
+import Wallet from "../models/wallet.model.js";
+import Stock from "../models/stock.model.js";
 import OTP from "../models/otp.model.js";
+import Portfolio from "../models/ownedStock.model.js";
+
 import { generateToken } from "../lib/utils.js";
 import { sendMail } from "../lib/sendmail.js"; // Import the sendMail function
 
@@ -30,7 +35,7 @@ export const signup = async (req, res) => {
     }
 
     // Check if password is strong enough
-    if (password.length < 10) {
+    if (password.length < 8) {
       return res
         .status(400)
         .json({ message: "Password must be at least 8 characters long" });
@@ -56,12 +61,15 @@ export const signup = async (req, res) => {
 
     await newUser.save(); // Save the user to the database
 
+    await Wallet.create({ userId: newUser._id, balance: 0, currency: "ETB" });
+
     // Generate token and set cookie
     generateToken(newUser._id, res); // Generate token and set cookie
 
-    res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
+    res.status(201).json({
+      message: "User created successfully",
+      user: { ...newUser._doc, balance: 0, stocks: [] },
+    });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -93,14 +101,47 @@ export const login = async (req, res) => {
 
     generateToken(user._id, res); // Generate token and set cookie
 
+    // Check if user has a wallet, if not create one
+    let wallet = await Wallet.findOne({ userId: user._id });
+    if (!wallet) {
+      wallet = await Wallet.create({
+        userId: user._id,
+        balance: 0,
+        currency: "ETB",
+      });
+    }
+
+    // Check if user has a portfolio, if not create one
+    const portfolio = await Portfolio.find({ userId: user._id });
+
+    let stocks = [];
+
+    if (portfolio && portfolio.length > 0) {
+      stocks = await Promise.all(
+        portfolio.map(async (stock) => ({
+          stockId: stock.stockId,
+          quantity: stock.quantity,
+          estimatedEarning: await calculateEstimatedEarnings(
+            stock.stockId,
+            stock.quantity
+          ),
+        }))
+      );
+    }
+
     res.status(200).json({
-      _id: user._id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      nickname: user.nickname,
-      isVerified: user.isVerified,
-      kycStatus: user.kycStatus,
+      user: {
+        _id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        nickname: user.nickname,
+        isVerified: user.isVerified,
+        kycStatus: user.kycStatus,
+        balance: wallet.balance,
+        stocks: stocks,
+      },
+      message: "Login successful",
     });
   } catch (error) {
     console.error("Error logging in:", error);
@@ -197,7 +238,9 @@ export const verifyOTP = async (req, res) => {
       console.log("User verified successfully");
     }
 
-    return res.status(200).json({ user, otpMatches: true, message: "OTP matches" });
+    return res
+      .status(200)
+      .json({ user, otpMatches: true, message: "OTP matches" });
   } catch (error) {
     console.error("Error at verifyOTP: ", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -214,9 +257,26 @@ export const saveCookie = async (req, res) => {
 
     const token = generateToken(userId, res); // Generate token and set cookie
 
-    return res.status(200).json({ message: "Cookie saved successfully", token });
+    return res
+      .status(200)
+      .json({ message: "Cookie saved successfully", token });
   } catch (error) {
     console.error("Error saving cookie:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const calculateEstimatedEarnings = async (stockId, quantity) => {
+  try {
+    const stock = await Stock.findById(stockId); // Fetch stock details from the database
+    if (!stock) {
+      throw new Error("Stock not found");
+    }
+
+    const estimatedEarnings = stock.unitPrice * quantity; // Calculate estimated earnings
+    return estimatedEarnings;
+  } catch (error) {
+    console.error("Error calculating estimated earnings:", error);
+    throw error; // Propagate the error
   }
 };

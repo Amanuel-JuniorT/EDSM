@@ -40,11 +40,6 @@ export const useProfileStore = create((set) => ({
   },
 
   getStocks: async () => {
-    const { user } = useAuthStore.getState();
-    if (!user) {
-      toast.error("User not authenticated");
-      return [];
-    }
     set({ isLoadingOwnedStocks: true });
     try {
       const res = await axiosInstance.get(`/user/owned_stocks`);
@@ -63,7 +58,7 @@ export const useProfileStore = create((set) => ({
   },
 
   updateBalance: async (amount) => {
-    const { user, refreshWallet } = useAuthStore.getState();
+    const { user } = useAuthStore.getState();
     if (!user) {
       toast.error("User not authenticated");
       return false;
@@ -76,7 +71,6 @@ export const useProfileStore = create((set) => ({
       set({ isUpdatingBalance: true });
       const res = await axiosInstance.post("/user/update_balance", { amount });
       set({ balance: res.data.balance });
-      refreshWallet(); // Refresh the wallet state in auth store
       toast.success("Balance updated successfully");
       set({ isUpdatingBalance: false });
       return true;
@@ -91,7 +85,7 @@ export const useProfileStore = create((set) => ({
   },
 
   buyStock: async (stock, quantity) => {
-    const { user, refreshWallet } = useAuthStore.getState();
+    const { user } = useAuthStore.getState();
     if (!user) {
       toast.error("User not authenticated");
       return false;
@@ -109,7 +103,6 @@ export const useProfileStore = create((set) => ({
       set((state) => ({
         ownedStocks: [...state.ownedStocks, res.data.stock],
       }));
-      refreshWallet(); // Refresh the wallet state in auth store
       toast.success("Stock bought successfully");
       set({ isBuyingStock: false });
       return true;
@@ -124,7 +117,7 @@ export const useProfileStore = create((set) => ({
   },
 
   sellStock: async (ownedStock, quantity) => {
-    const { user, refreshWallet } = useAuthStore.getState();
+    const { user } = useAuthStore.getState();
     if (!user) {
       toast.error("User not authenticated");
       return false;
@@ -135,14 +128,13 @@ export const useProfileStore = create((set) => ({
     }
     set({ isBuyingStock: true });
     try {
-      const res = await axiosInstance.post("/user/buy_stock", {
-        portfolioId: ownedStock._id,
+      const res = await axiosInstance.post("/user/sell_stock", {
+        portfolioId: ownedStock.portfolioId,
         quantity,
       });
       set((state) => ({
         ownedStocks: [...state.ownedStocks, res.data.stock],
       }));
-      refreshWallet(); // Refresh the wallet state in auth store
       toast.success("Stock bought successfully");
       set({ isBuyingStock: false });
       return true;

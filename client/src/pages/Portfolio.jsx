@@ -202,26 +202,26 @@ export default function Portfolio() {
                     onClick={() => navigate(`/stock/${stock.symbol}`)}
                   >
                     <td>
-                      <div style={{ fontWeight: 600 }}>{stock.symbol}</div>
+                      <div style={{ fontWeight: 600 }}>{stock?.symbol}</div>
                       <div
                         style={{
                           color: "var(--light-text)",
                           fontSize: "0.95em",
                         }}
                       >
-                        {stock.name}
+                        {stock?.name}
                       </div>
                       
                     </td>
 
                     <td>
-                      {stock.quantity.toLocaleString()} shares
+                      {stock?.quantity.toLocaleString()} shares
                     </td>
 
-                    <td>ETB {stock.unitPrice?.toLocaleString()}</td>
+                    <td>ETB {stock?.unitPrice?.toLocaleString()}</td>
 
                     <td>
-                        ETB {stock.totalValue?.toLocaleString()}
+                        ETB {stock?.totalValue?.toLocaleString()}
                     </td>
                     
                   </tr>

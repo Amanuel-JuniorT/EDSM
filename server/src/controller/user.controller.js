@@ -140,12 +140,6 @@ export const addOwnedStock = async (req, res) => {
   }
 };
 
-// Remove
-
-// Get the stock and (use portfolio id)
-
-// Deduct the quantity or remove the portfolio
-
 export const sellOwnedStock = async (req, res) => {
   try {
     const userId = req.user._id;

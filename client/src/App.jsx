@@ -14,6 +14,17 @@ import Settings from "./pages/Settings";
 import News from "./pages/News";
 import StockDetail from "./pages/StockDetail";
 import Watchlist from "./pages/Watchlist";
+// Admin imports
+import AdminLayout from "./admin/layout/AdminLayout";
+import AdminDashboard from "./admin/pages/Dashboard";
+import Users from "./admin/pages/Users";
+import Stocks from "./admin/pages/Stocks";
+import Transactions from "./admin/pages/Transactions";
+// Placeholders for missing pages
+import Verifications from "./admin/pages/Verifications";
+import AdminSettings from "./admin/pages/AdminSettings";
+import AdminNews from "./admin/pages/News";
+import "./admin/styles/admin.css";
 
 const App = () => {
   const { isCheckingAuth, checkAuth, user } = useAuthStore();
@@ -47,6 +58,18 @@ const App = () => {
       {/* Route to market */}
 
       <Routes>
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="users" element={<Users />} />
+          <Route path="stocks" element={<Stocks />} />
+          <Route path="transactions" element={<Transactions />} />
+          <Route path="verifications" element={<Verifications />} />
+          <Route path="news" element={<AdminNews />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
+
+        {/* Route to market */}
         <Route path="/market" element={<Layout />}>
           <Route index element={<Market />} />
         </Route>

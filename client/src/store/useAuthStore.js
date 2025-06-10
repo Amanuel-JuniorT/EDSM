@@ -144,16 +144,16 @@ export const useAuthStore = create((set) => ({
 
   clearUser: () => set({ user: null }),
 
-  refreshWallet: async () => {
-  const res = await axiosInstance.get("/user/walet_summary");
-  set((state) => ({
-    user: {
-      ...state.user,
-      balance: res.data.balance,
-      portfolio: res.data.portfolio
-    }
-  }));
-}
+//   refreshWallet: async () => {
+//   const res = await axiosInstance.get("/user/walet_summary");
+//   set((state) => ({
+//     user: {
+//       ...state.user,
+//       balance: res.data.balance,
+//       portfolio: res.data.portfolio
+//     }
+//   }));
+// }
 
 
   

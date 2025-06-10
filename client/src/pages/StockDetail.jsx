@@ -200,11 +200,25 @@ function BuySellWidget({ stock }) {
     isLoadingBalance,
     buyStock,
     isBuyingStock,
+    ownedStocks,
+    sellStock,
   } = useProfileStore();
   const [tab, setTab] = useState("buy");
   const [shares, setShares] = useState(1);
   const [cost, setCost] = useState(stock?.unitPrice);
   const [sellReason, setSellReason] = useState("");
+
+  const found = ownedStocks.find((element) => {
+    return element.symbol === stock.symbol;
+  });
+
+  console.log({ found, ownedStocks: ownedStocks });
+
+  useEffect(() => {
+    if (tab == "sell" && found == null) {
+      toast.error("Stock is not owned. Could not sell stock.");
+    }
+  }, [tab, found]);
 
   // Update estimated cost when shares change
   React.useEffect(() => {
@@ -212,7 +226,7 @@ function BuySellWidget({ stock }) {
   }, [shares, stock?.unitPrice]);
 
   // Determine if Sell button should be enabled
-  const canSell = shares > 0 && sellReason.trim().length > 0;
+  const canSell = found != null && shares > 0 && sellReason.trim().length > 0;
 
   // Function to handle buy action
   const handleBuy = async () => {
@@ -228,21 +242,36 @@ function BuySellWidget({ stock }) {
       return;
     }
 
-    
     // Add stock to user's portfolio
-    
+
     const res = await buyStock(stock, shares);
     if (!res) {
       toast.error("Failed to buy stock. Please try again.");
       return;
     }
-    
+
     // Deduct cost from user's balance
 
     await updateBalance(-cost); // Update balance in the store
     toast.success(`Successfully bought ${shares} shares of ${stock.symbol}`);
 
     // const res = updateBalance(cost);
+  };
+
+  const handleSell = async () => {
+    if (shares > found.quantity) {
+      return toast.error("Insufficient Stock");
+    }
+
+    // Sell stock
+    const res = await sellStock(found, shares);
+    if (!res) {
+      return toast.error("Failed to sell stock.");
+    }
+
+    //Update balance
+    await updateBalance(cost);
+    toast.success(`Successfully sold ${shares} shares of ${stock.symbol}`);
   };
 
   return (
@@ -437,11 +466,7 @@ function BuySellWidget({ stock }) {
           opacity: (tab === "sell" ? canSell : shares >= 1) ? 1 : 0.6,
           transition: "background 0.15s, opacity 0.15s",
         }}
-        onClick={
-          tab === "buy"
-            ? handleBuy
-            : () => alert("Sell action not implemented yet")
-        }
+        onClick={tab === "buy" ? handleBuy : handleSell}
         disabled={tab === "sell" ? !canSell : shares < 1 || isLoadingBalance}
       >
         <span
@@ -467,6 +492,7 @@ function BuySellWidget({ stock }) {
 
 export default function StockDetail() {
   const { symbol } = useParams();
+  const { getStocks } = useProfileStore();
   const { stocks, fetchStocks } = useStocksStore(); // Assuming useStocksStore is defined in your store
   // const symbol = "ETHFOOD"; // Hardcoded for demo purposes, replace with useParams() in real app
   const navigate = useNavigate();
@@ -486,7 +512,9 @@ export default function StockDetail() {
   useEffect(() => {
     // Fetch stocks if not already loaded
     fetchStocks();
-  }, [fetchStocks]);
+
+    getStocks();
+  }, [fetchStocks, getStocks]);
 
   if (stocks.length !== 0 && stock == null) {
     stock = stocks.find((s) => s.symbol === symbol);

@@ -30,13 +30,8 @@ router.get("/getUser", protectedRoute, getUser)
 // Route for user logout
 router.post("/logout", logout);
 
+//Route for save cookie
 router.get("/saveUser", saveCookie);
 
-// router.post("/test", (req, res) => {
-//   const name = req.query.name;
-//   console.log(`Name: ${name}`);
-//   return res.status(200).json({ message: "Arrived"});
-
-// });
 
 export default router;

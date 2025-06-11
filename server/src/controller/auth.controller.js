@@ -195,7 +195,7 @@ export const sendOTP = async (req, res) => {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000),
     });
 
-    //TODO: Send code via email
+    sendMail(email, purpose, code);
 
     console.log(`OTP for ${purpose}:`, code);
     return res.status(200).json({ otpSent: true, code });

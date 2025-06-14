@@ -16,6 +16,7 @@ export const useProfileStore = create((set) => ({
 
   getBalance: async () => {
     const { user } = useAuthStore.getState();
+    console.log("Getting balance")
 
     if (!user) {
       toast.error("User not authenticated");
@@ -26,6 +27,7 @@ export const useProfileStore = create((set) => ({
       const res = await axiosInstance.get(`/user/balance/`);
       set({ balance: res.data.balance });
       set({ isLoadingBalance: false });
+      console.log("Successfully fetched. Balance = " + res.data.balance);
       return res.data.balance;
     } catch (error) {
       set({ isLoadingBalance: false });
@@ -33,6 +35,7 @@ export const useProfileStore = create((set) => ({
         "Error fetching balance: " + error.response?.data?.message ||
           "Unknown error"
       );
+      console.log(error)
       return null;
     } finally {
       set({ isLoadingBalance: false });

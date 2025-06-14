@@ -200,7 +200,7 @@ export default function Dashboard() {
           <div className="summary-title">Available Balance</div>
           <div className="summary-value">
             ETB{" "}
-            {isLoadingBalance || !balance ? (
+            {isLoadingBalance || balance == null ? (
               <div className="loading-spinner" />
             ) : (
               balance.toLocaleString()

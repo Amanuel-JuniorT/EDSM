@@ -14,6 +14,6 @@ router.get("/balance", protectedRoute, getBalance);
 router.post("/update_balance", protectedRoute, updateBalance);
 router.post("/buy_stock", protectedRoute, addOwnedStock);
 router.post("/sell_stock", protectedRoute, sellOwnedStock);
-router.get("/owned_stocks", protectedRoute, getOwnedStocks); // Assuming this is the correct endpoint for owned stocks
+router.get("/owned_stocks", protectedRoute, getOwnedStocks); 
 
 export default router;

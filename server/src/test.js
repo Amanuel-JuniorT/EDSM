@@ -1,27 +1,5 @@
-import nodemailer from "nodemailer";
+import { MailSlurp } from "mailslurp-client";
+import crossFetch from "cross"
 
-var transport = nodemailer.createTransport({
-  host: "live.smtp.mailtrap.io",
-  port: 587,
-  secure: false,
-  auth: {
-    user: "api",
-    pass: "67bfd8d65b40701c486f89541b2bba99"
-  }
-});
 
-const mailOptions = {
-  from: 'hello@demomailtrap.co',
-  to: 'amanueltzb@gmail.com',
-  subject: 'Sending Email using Node.js',
-  text: 'That was easy!'
-};
-
-// Send the email
-transport.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log('Error:', error);
-  } else {
-    console.log('Email sent:', info.response);
-  }
-});
+const mailslurp = new MailSlurp({ apiKey: "99994de35e1778ff0f3a9f07b253100c308be4e5d4296739e034efc7fdaa5529" });

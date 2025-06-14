@@ -27,6 +27,10 @@ app.use("/api/stocks", stocksRoutes); // Use the stocks routes
 
 app.use("/api/user", userRoute); // Use the user routes
 
+// app.use("/api/admin", adminRoute);
+
+// app.use("/api/transaction", transactionRoute);
+
 app.listen("5000", () => {
   console.log("Server is running on port 5000");
   connectDB();
